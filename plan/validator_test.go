@@ -135,6 +135,10 @@ func (s *testValidatorSuite) TestValidator(c *C) {
 		{"alter table t change column a `a ` int", true, errors.New("[ddl:1166]Incorrect column name 'a '")},
 		{"create index idx on `t ` (a)", true, errors.New("[ddl:1103]Incorrect table name 't '")},
 		{"create index idx on  `` (a)", true, errors.New("[ddl:1103]Incorrect table name ''")},
+
+		// issue 3843
+		{"create index `primary` on t (i)", true, errors.New("[ddl:1280]Incorrect index name 'primary'")},
+		{"alter table t add index `primary` (i)", true, errors.New("[ddl:1280]Incorrect index name 'primary'")},
 	}
 
 	store, err := tidb.NewStore(tidb.EngineGoLevelDBMemory)
